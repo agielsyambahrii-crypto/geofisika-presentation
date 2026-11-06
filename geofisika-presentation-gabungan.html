@@ -2,6 +2,11 @@
 <html lang="id">
 <head>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    if (!window.THREE) {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"><\/script>');
+    }
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#07111f">
@@ -124,8 +129,16 @@
   cursor: grabbing;
 }
 
-#geo2d-fallback {
-  touch-action: none;
+.game-render-error {
+  position: absolute;
+  inset: auto 8% 12%;
+  padding: 14px 18px;
+  border: 1px solid #e9b66f70;
+  background: #071522e8;
+  color: #f0c986;
+  text-align: center;
+  font: 10px 'DM Mono';
+  letter-spacing: .5px;
 }
 
 .game-play, .game-reset, .game-mode, .game-slider input {
@@ -311,7 +324,7 @@
 
 @media(max-width:700px) {
   .game-viewport { height: clamp(430px, 105vw, 560px); }
-  #geo3d, #geo2d-fallback { min-height: inherit; }
+  #geo3d { min-height: inherit; }
   .game-dashboard { grid-template-columns: 1fr; }
   .game-info { border-right: 0; border-bottom: 1px solid #ffffff15; }
   .game-topbar { padding: 20px; }
@@ -606,279 +619,23 @@ document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{con
 
   const $ = id => document.getElementById(id);
 
-  function startFallback() {
-    const viewport = canvas.parentElement;
-    let fallbackCanvas = document.getElementById("geo2d-fallback");
-
-    if (!fallbackCanvas) {
-      fallbackCanvas = document.createElement("canvas");
-      fallbackCanvas.id = "geo2d-fallback";
-      fallbackCanvas.setAttribute("role", "img");
-      fallbackCanvas.setAttribute("aria-label", "Simulasi geofisika interaktif 2D");
-      fallbackCanvas.style.cssText =
-        "position:absolute;inset:0;width:100%;height:100%;display:block";
-      viewport.appendChild(fallbackCanvas);
-    }
-
-    canvas.style.display = "none";
-    const overlayLabel = document.querySelector(".overlay-top span:last-child");
-    const crosshair = document.querySelector(".game-crosshair");
-    if (overlayLabel) overlayLabel.textContent = "INTERACTIVE 2D FALLBACK";
-    if (crosshair) crosshair.hidden = true;
-
-    const context = fallbackCanvas.getContext("2d");
-    const slider = $("game-slider");
-    const playButton = $("game-play");
-    const status = $("game-status");
-    const buttonText = {
-      seismic: ["SEISMIC REFRACTION", "Seismic Wave Exploration", "SEISMIC",
-        "WAVE SPEED", "WAVE PROPAGATION",
-        "Gelombang merambat dari sumber menuju geofon. Perhatikan jalur refraksi pada lapisan kedua.",
-        1, 3, 0.1, 1],
-      resistivity: ["SCHLUMBERGER ARRAY", "Electrical Resistivity Survey", "RESISTIVITY",
-        "ELECTRODE SPACING", "AB / 2 DISTANCE",
-        "Geser parameter untuk melihat perubahan jarak elektroda dan jangkauan arus.",
-        30, 90, 5, 60],
-      magnetic: ["MAGNETIC ANOMALY", "Magnetic Field Exploration", "MAGNETIC",
-        "SENSOR POSITION", "MAGNETIC ANOMALY",
-        "Gerakkan sensor mendekati pusat sumber untuk melihat perubahan nilai anomali magnetik.",
-        -60, 60, 5, -60]
-    };
-    let mode = "seismic";
-    let running = false;
-    let elapsed = 0;
-    let width = 0;
-    let height = 0;
-    let pixelRatio = 1;
-
-    function updateReadout() {
-      const value = Number(slider.value);
-      $("game-slider-value").textContent = mode === "seismic"
-        ? value.toFixed(1) + "×"
-        : mode === "magnetic"
-          ? (value < 0 ? "−" : "") + Math.abs(value) + " m"
-          : value + " m";
-      $("game-readout").textContent = mode === "seismic"
-        ? (1500 * value).toFixed(0) + " m/s"
-        : mode === "magnetic"
-          ? (1e-7 * 50000 * (2 * 30 * 30 - value * value) /
-            Math.pow(value * value + 30 * 30, 2.5) * 1e9).toFixed(2) + " nT"
-          : value + " m";
-    }
-
-    function changeMode(next) {
-      mode = next;
-      const config = buttonText[mode];
-      $("game-scene-name").textContent = config[0];
-      $("game-title").textContent = config[1];
-      $("game-method").textContent = config[2];
-      $("game-slider-label").textContent = config[3];
-      $("game-readout-label").textContent = config[4];
-      $("game-hint").textContent = config[5] +
-        " Visualisasi 2D aktif sebagai cadangan untuk perangkat yang tidak mendukung WebGL.";
-      slider.min = config[6];
-      slider.max = config[7];
-      slider.step = config[8];
-      slider.value = config[9];
-      elapsed = 0;
-      running = false;
-      playButton.textContent = "▶ START SIMULATION";
-      status.textContent = "READY";
-      document.querySelectorAll(".game-mode").forEach(button => {
-        button.classList.toggle("active", button.dataset.mode === mode);
-      });
-      updateReadout();
-      draw();
-    }
-
-    function resize() {
-      const rect = viewport.getBoundingClientRect();
-      width = rect.width;
-      height = rect.height;
-      pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-      fallbackCanvas.width = Math.round(width * pixelRatio);
-      fallbackCanvas.height = Math.round(height * pixelRatio);
-      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-      draw();
-    }
-
-    function draw() {
-      if (!context || !width || !height) return;
-      const w = width;
-      const h = height;
-      const surfaceY = h * 0.48;
-      const centerX = w * 0.5;
-
-      context.clearRect(0, 0, w, h);
-      const sky = context.createLinearGradient(0, 0, 0, h);
-      sky.addColorStop(0, "#071522");
-      sky.addColorStop(1, "#10283a");
-      context.fillStyle = sky;
-      context.fillRect(0, 0, w, h);
-
-      context.fillStyle = "#294453";
-      context.fillRect(w * 0.08, surfaceY, w * 0.84, h * 0.2);
-      context.fillStyle = "#1e3547";
-      context.fillRect(w * 0.08, surfaceY + h * 0.2, w * 0.84, h * 0.17);
-      context.fillStyle = "#142a3b";
-      context.fillRect(w * 0.08, surfaceY + h * 0.37, w * 0.84, h * 0.15);
-
-      context.strokeStyle = "#426171";
-      context.lineWidth = 1;
-      for (let i = 0; i <= 16; i++) {
-        const x = w * (0.08 + i * 0.84 / 16);
-        context.beginPath();
-        context.moveTo(x, surfaceY);
-        context.lineTo(x, h * 0.86);
-        context.stroke();
-      }
-      context.strokeStyle = "#5b7c8c";
-      context.beginPath();
-      context.moveTo(w * 0.08, surfaceY);
-      context.lineTo(w * 0.92, surfaceY);
-      context.stroke();
-
-      if (mode === "seismic") {
-        const sourceY = surfaceY + h * 0.04;
-        const radiusLimit = Math.min(w * 0.42, h * 0.34);
-        for (let i = 0; i < 5; i++) {
-          const radius = ((elapsed * 80 + i * radiusLimit / 5) % radiusLimit) + 10;
-          context.beginPath();
-          context.ellipse(centerX, sourceY, radius, radius * 0.48, 0, 0, Math.PI * 2);
-          context.strokeStyle = i % 2 ? "#55f1ff" : "#ffc15e";
-          context.globalAlpha = 0.95 - i * 0.12;
-          context.lineWidth = Math.max(2, w * 0.003);
-          context.stroke();
-        }
-        context.globalAlpha = 1;
-        for (let i = -3; i <= 3; i++) {
-          const x = centerX + i * w * 0.09;
-          context.fillStyle = "#75e9ef";
-          context.fillRect(x - 3, surfaceY - 24, 6, 34);
-          context.beginPath();
-          context.arc(x, surfaceY - 24, 6, 0, Math.PI * 2);
-          context.fill();
-        }
-        context.fillStyle = "#ffc15e";
-        context.beginPath();
-        context.arc(centerX, sourceY, 10, 0, Math.PI * 2);
-        context.fill();
-      }
-
-      if (mode === "resistivity") {
-        const spread = Math.min(w * 0.36, w * 0.25 * Number(slider.value) / 60);
-        const points = [-spread, -spread * 0.26, spread * 0.26, spread]
-          .map(offset => centerX + offset);
-        points.forEach((x, i) => {
-          context.strokeStyle = i === 0 || i === 3 ? "#ffbd68" : "#60dce8";
-          context.lineWidth = 5;
-          context.beginPath();
-          context.moveTo(x, surfaceY - 14);
-          context.lineTo(x, surfaceY + 36);
-          context.stroke();
-          context.beginPath();
-          context.arc(x, surfaceY - 15, 7, 0, Math.PI * 2);
-          context.fillStyle = i === 0 || i === 3 ? "#ffc15e" : "#70f2fa";
-          context.fill();
-        });
-        for (let i = 0; i < 6; i++) {
-          const depth = h * (0.15 + i * 0.045);
-          context.beginPath();
-          context.moveTo(points[0], surfaceY + 8);
-          context.bezierCurveTo(points[0], surfaceY + depth, centerX, surfaceY + depth, centerX, surfaceY + depth * 1.12);
-          context.bezierCurveTo(centerX, surfaceY + depth, points[3], surfaceY + depth, points[3], surfaceY + 8);
-          context.strokeStyle = "#ffc15e";
-          context.globalAlpha = 0.9 - i * 0.08;
-          context.lineWidth = 3;
-          context.stroke();
-        }
-        context.globalAlpha = 1;
-        for (let i = 0; i < 6; i++) {
-          const t = (elapsed * 0.45 + i / 6) % 1;
-          const x = points[0] + (points[3] - points[0]) * t;
-          const y = surfaceY + Math.sin(t * Math.PI) * h * 0.24;
-          context.beginPath();
-          context.arc(x, y, 5, 0, Math.PI * 2);
-          context.fillStyle = "#fff0a3";
-          context.fill();
-        }
-      }
-
-      if (mode === "magnetic") {
-        const sourceY = surfaceY + h * 0.29;
-        const sensorX = w * (0.5 + Number(slider.value) / 160);
-        for (let i = 0; i < 5; i++) {
-          const radius = h * (0.11 + i * 0.045);
-          context.beginPath();
-          context.ellipse(centerX, sourceY, radius * 1.65, radius, 0, Math.PI, Math.PI * 2);
-          context.bezierCurveTo(centerX + radius * 1.65, sourceY + radius * 1.6,
-            centerX - radius * 1.65, sourceY + radius * 1.6, centerX - radius * 1.65, sourceY);
-          context.strokeStyle = "#c3aaff";
-          context.globalAlpha = 0.95 - i * 0.1;
-          context.lineWidth = 3;
-          context.stroke();
-        }
-        context.globalAlpha = 1;
-        context.fillStyle = "#b69af7";
-        context.beginPath();
-        context.arc(centerX, sourceY, 13, 0, Math.PI * 2);
-        context.fill();
-        context.strokeStyle = "#d9c7ff";
-        context.setLineDash([6, 5]);
-        context.beginPath();
-        context.moveTo(sensorX, surfaceY - 6);
-        context.lineTo(centerX, sourceY);
-        context.stroke();
-        context.setLineDash([]);
-        context.fillStyle = "#61f5ff";
-        context.fillRect(sensorX - 10, surfaceY - 24, 20, 20);
-        context.beginPath();
-        context.arc(sensorX, surfaceY - 25, 7, 0, Math.PI * 2);
-        context.fill();
-      }
-
-      context.fillStyle = "#a9bac8";
-      context.font = "11px monospace";
-      context.fillText(mode === "seismic" ? "GEOPHONES" :
-        mode === "resistivity" ? "SCHLUMBERGER ARRAY" : "MAGNETIC SENSOR", w * 0.1, h * 0.92);
-      context.fillText("INTERACTIVE 2D FALLBACK", w * 0.68, h * 0.92);
-    }
-
-    document.querySelectorAll(".game-mode").forEach(button => {
-      button.addEventListener("click", () => changeMode(button.dataset.mode));
-    });
-    playButton.addEventListener("click", () => {
-      running = !running;
-      playButton.textContent = running ? "Ⅱ PAUSE SIMULATION" : "▶ RESUME SIMULATION";
-      status.textContent = running ? "RUNNING" : "PAUSED";
-    });
-    $("game-reset").addEventListener("click", () => {
-      elapsed = 0;
-      running = false;
-      playButton.textContent = "▶ START SIMULATION";
-      status.textContent = "READY";
-      draw();
-    });
-    slider.addEventListener("input", () => {
-      updateReadout();
-      draw();
-    });
-    window.addEventListener("resize", resize);
-
-    changeMode("seismic");
-    resize();
-
-    function animateFallback() {
-      if (running) elapsed += 0.016 * (mode === "seismic" ? Number(slider.value) : 1);
-      draw();
-      window.requestAnimationFrame(animateFallback);
-    }
-    window.requestAnimationFrame(animateFallback);
+  function showRenderError(message, error) {
+    console.error(message, error || "");
+    $("game-status").textContent = "3D UNAVAILABLE";
+    $("game-play").textContent = "3D TIDAK TERSEDIA";
+    $("game-play").disabled = true;
+    $("game-hint").textContent =
+      "Simulasi 3D memerlukan WebGL dan koneksi ke pustaka Three.js. " +
+      "Coba perbarui browser atau aktifkan akselerasi perangkat keras.";
+    const notice = document.createElement("div");
+    notice.className = "game-render-error";
+    notice.textContent =
+      "SIMULASI 3D TIDAK DAPAT DIMUAT · Periksa koneksi internet atau dukungan WebGL browser.";
+    canvas.parentElement.appendChild(notice);
   }
 
   if (!window.THREE) {
-    console.error("Three.js failed to load; using the interactive 2D simulation fallback.");
-    startFallback();
+    showRenderError("Three.js gagal dimuat.");
     return;
   }
 
@@ -908,8 +665,7 @@ document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{con
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 0.9;
   } catch (error) {
-    console.error("WebGL initialization failed; using the interactive 2D simulation fallback.", error);
-    startFallback();
+    showRenderError("Inisialisasi WebGL gagal.", error);
     return;
   }
 
