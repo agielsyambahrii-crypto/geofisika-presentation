@@ -1,22 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" fill="none">
   <defs>
     <linearGradient id="frame" x1="30" y1="24" x2="210" y2="214" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#315D46"/>
-      <stop offset=".52" stop-color="#6D8662"/>
-      <stop offset="1" stop-color="#B65C3E"/>
+      <stop stop-color="#70F0E7"/>
+      <stop offset=".52" stop-color="#4BCDDC"/>
+      <stop offset="1" stop-color="#B69AF7"/>
     </linearGradient>
     <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="matrix(0 104 -104 0 120 86)" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#7E936C" stop-opacity=".22"/>
-      <stop offset="1" stop-color="#7E936C" stop-opacity="0"/>
+      <stop stop-color="#45DCE2" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#45DCE2" stop-opacity="0"/>
     </radialGradient>
   </defs>
   <circle cx="120" cy="100" r="98" fill="url(#glow)"/>
   <path d="M120 15 205 64v71l-85 49-85-49V64l85-49Z" stroke="url(#frame)" stroke-width="2"/>
-  <path d="M47 111c16-25 29 25 45 0s29 25 45 0 29 25 45 0" stroke="#315D46" stroke-linecap="round" stroke-width="4"/>
-  <path d="M56 133c14-18 25 18 39 0s25 18 39 0 25 18 39 0" stroke="#B65C3E" stroke-linecap="round" stroke-opacity=".95" stroke-width="3"/>
-  <circle cx="120" cy="83" r="7" fill="#D29A48"/>
-  <circle cx="120" cy="83" r="17" stroke="#B65C3E" stroke-opacity=".58"/>
-  <path d="M120 66V41m-12 42H82m50 0h26" stroke="#72836B" stroke-linecap="round" stroke-opacity=".85"/>
+  <path d="M47 111c16-25 29 25 45 0s29 25 45 0 29 25 45 0" stroke="#73E6E5" stroke-linecap="round" stroke-width="4"/>
+  <path d="M56 133c14-18 25 18 39 0s25 18 39 0 25 18 39 0" stroke="#E8B96E" stroke-linecap="round" stroke-opacity=".95" stroke-width="3"/>
+  <circle cx="120" cy="83" r="7" fill="#F2C477"/>
+  <circle cx="120" cy="83" r="17" stroke="#F2C477" stroke-opacity=".52"/>
+  <path d="M120 66V41m-12 42H82m50 0h26" stroke="#8EAEBD" stroke-linecap="round" stroke-opacity=".72"/>
   <text x="120" y="214" fill="#29372F" font-family="Arial,sans-serif" font-size="21" font-weight="700" letter-spacing="3.2" text-anchor="middle">THE FIELD</text>
   <path d="M74 225h92" stroke="url(#frame)" stroke-linecap="round" stroke-width="2"/>
 </svg>
