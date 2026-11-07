@@ -347,18 +347,17 @@
   transform: translateY(-50%);
   opacity: 1;
 }
-.team-heading {
-  display: flex;
+.team-identity {
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
-  margin: 0 0 14px;
-  color: #8da1b4;
-  font: 9px 'DM Mono', monospace;
-  letter-spacing: 2px;
+  gap: 14px;
 }
-.team-heading strong {
-  color: #58d9de;
-  font-size: 11px;
+.team-logo {
+  display: block;
+  width: 86px;
+  height: auto;
+  filter: drop-shadow(0 10px 24px #42d4db24);
 }
 .team-cards {
   display: grid;
@@ -412,6 +411,8 @@
 @media(max-width:850px) {
   .hero-content { width: 48%; }
   .hero-visual.team-visual { right: 5%; width: 43%; }
+  .team-identity { grid-template-columns: 70px minmax(0, 1fr); gap: 9px; }
+  .team-logo { width: 70px; }
   .team-cards { gap: 8px; }
   .team-card img { height: clamp(195px, 33vw, 280px); }
   .team-card figcaption { padding-right: 8px; padding-left: 8px; }
@@ -430,6 +431,8 @@
     margin: 30px 0 38px;
     transform: none;
   }
+  .team-identity { grid-template-columns: 1fr; gap: 13px; }
+  .team-logo { width: 142px; }
   .team-cards { gap: 9px; }
   .team-card { border-radius: 9px; }
   .team-card img { height: clamp(160px, 47vw, 215px); }
@@ -454,26 +457,28 @@
     <section class="hero">
       <div class="hero-grid"></div>
       <div class="hero-content">
-        <div class="eyebrow"><i></i> LAPORAN PRAKTIKUM · PENGOLAHAN DATA GEOFISIKA</div>
+        <div class="eyebrow"><i></i> PENGOLAHAN DATA GEOFISIKA</div>
         <h1>Membaca Bumi<br><em>melalui data.</em></h1>
         <p class="hero-copy">Dari pengukuran lapangan, pemrograman Fortran, hingga hasil pengolahan. Tiga metode geofisika dalam satu alur interpretasi.</p>
         <div class="hero-actions"><a class="primary-btn" href="#overview">Jelajahi materi <span>↓</span></a><span class="hero-note">DATA → CODE → INSIGHT</span></div>
       </div>
       <div class="hero-visual team-visual" aria-label="Profil tim presentasi geofisika">
-        <div class="team-heading"><span>THE FIELD TEAM</span><strong>03 PROFILES</strong></div>
-        <div class="team-cards">
-          <figure class="team-card">
-            <img src="assets/profiles/agiel-syambahri.jpeg" alt="Agiel Syambahri" fetchpriority="high">
-            <figcaption><span>01 / TEAM</span><strong>Agiel Syambahri</strong></figcaption>
-          </figure>
-          <figure class="team-card">
-            <img src="assets/profiles/ammara-qisty.jpeg" alt="Ammara Qisty" fetchpriority="high">
-            <figcaption><span>02 / TEAM</span><strong>Ammara Qisty</strong></figcaption>
-          </figure>
-          <figure class="team-card">
-            <img src="assets/profiles/mita-anggraini.jpeg" alt="Mita Anggraini" fetchpriority="high">
-            <figcaption><span>03 / TEAM</span><strong>Mita Anggraini</strong></figcaption>
-          </figure>
+        <div class="team-identity">
+          <img class="team-logo" src="assets/the-field-logo.svg" alt="Logo The Field">
+          <div class="team-cards">
+            <figure class="team-card">
+              <img src="assets/profiles/agiel-syambahri.jpeg" alt="Agiel Syambahri" fetchpriority="high">
+              <figcaption><span>01 / TEAM</span><strong>Agiel Syambahri</strong></figcaption>
+            </figure>
+            <figure class="team-card">
+              <img src="assets/profiles/ammara-qisty.jpeg" alt="Ammara Qisty" fetchpriority="high">
+              <figcaption><span>02 / TEAM</span><strong>Ammara Qisty</strong></figcaption>
+            </figure>
+            <figure class="team-card">
+              <img src="assets/profiles/mita-anggraini.jpeg" alt="Mita Anggraini" fetchpriority="high">
+              <figcaption><span>03 / TEAM</span><strong>Mita Anggraini</strong></figcaption>
+            </figure>
+          </div>
         </div>
       </div>
       <div class="hero-bottom"><span>GEOPHYSICS / DIGITAL PRESENTATION</span><span>01 — 03</span></div>
