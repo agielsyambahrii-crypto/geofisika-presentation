@@ -338,6 +338,19 @@
 </style>
 <style>
 .hero-content { width: 49%; max-width: 610px; }
+.hero-brand-logo {
+  display: block;
+  width: clamp(180px, 17vw, 230px);
+  height: auto;
+  margin: 0 0 16px;
+  filter: drop-shadow(0 14px 34px #42d4db30);
+}
+.hero h1 {
+  margin-top: 16px;
+  font-size: clamp(40px, 4.2vw, 58px);
+  line-height: 1.04;
+  letter-spacing: -2.5px;
+}
 .hero-visual.team-visual {
   right: 6%;
   top: 50%;
@@ -346,18 +359,6 @@
   display: block;
   transform: translateY(-50%);
   opacity: 1;
-}
-.team-identity {
-  display: grid;
-  grid-template-columns: 86px minmax(0, 1fr);
-  align-items: center;
-  gap: 14px;
-}
-.team-logo {
-  display: block;
-  width: 86px;
-  height: auto;
-  filter: drop-shadow(0 10px 24px #42d4db24);
 }
 .team-cards {
   display: grid;
@@ -411,8 +412,8 @@
 @media(max-width:850px) {
   .hero-content { width: 48%; }
   .hero-visual.team-visual { right: 5%; width: 43%; }
-  .team-identity { grid-template-columns: 70px minmax(0, 1fr); gap: 9px; }
-  .team-logo { width: 70px; }
+  .hero-brand-logo { width: clamp(170px, 20vw, 205px); }
+  .hero h1 { font-size: clamp(38px, 5vw, 48px); }
   .team-cards { gap: 8px; }
   .team-card img { height: clamp(195px, 33vw, 280px); }
   .team-card figcaption { padding-right: 8px; padding-left: 8px; }
@@ -424,6 +425,8 @@
     flex-direction: column;
   }
   .hero-content { width: 100%; }
+  .hero-brand-logo { width: min(190px, 55vw); margin-bottom: 12px; }
+  .hero h1 { margin-top: 12px; font-size: clamp(38px, 10vw, 48px); }
   .hero-visual.team-visual {
     position: relative;
     inset: auto;
@@ -431,8 +434,6 @@
     margin: 30px 0 38px;
     transform: none;
   }
-  .team-identity { grid-template-columns: 1fr; gap: 13px; }
-  .team-logo { width: 142px; }
   .team-cards { gap: 9px; }
   .team-card { border-radius: 9px; }
   .team-card img { height: clamp(160px, 47vw, 215px); }
@@ -458,14 +459,13 @@
       <div class="hero-grid"></div>
       <div class="hero-content">
         <div class="eyebrow"><i></i> PENGOLAHAN DATA GEOFISIKA</div>
+        <img class="hero-brand-logo" src="assets/the-field-logo.svg" alt="Logo The Field">
         <h1>Membaca Bumi<br><em>melalui data.</em></h1>
         <p class="hero-copy">Dari pengukuran lapangan, pemrograman Fortran, hingga hasil pengolahan. Tiga metode geofisika dalam satu alur interpretasi.</p>
         <div class="hero-actions"><a class="primary-btn" href="#overview">Jelajahi materi <span>↓</span></a><span class="hero-note">DATA → CODE → INSIGHT</span></div>
       </div>
       <div class="hero-visual team-visual" aria-label="Profil tim presentasi geofisika">
-        <div class="team-identity">
-          <img class="team-logo" src="assets/the-field-logo.svg" alt="Logo The Field">
-          <div class="team-cards">
+        <div class="team-cards">
             <figure class="team-card">
               <img src="assets/profiles/agiel-syambahri.jpeg" alt="Agiel Syambahri" fetchpriority="high">
               <figcaption><span>01 / TEAM</span><strong>Agiel Syambahri</strong></figcaption>
@@ -478,7 +478,6 @@
               <img src="assets/profiles/mita-anggraini.jpeg" alt="Mita Anggraini" fetchpriority="high">
               <figcaption><span>03 / TEAM</span><strong>Mita Anggraini</strong></figcaption>
             </figure>
-          </div>
         </div>
       </div>
       <div class="hero-bottom"><span>GEOPHYSICS / DIGITAL PRESENTATION</span><span>01 — 03</span></div>
