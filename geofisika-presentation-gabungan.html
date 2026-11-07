@@ -442,13 +442,426 @@
   .team-card figcaption strong { font-size: 10px; }
 }
 </style>
+<style>
+:root {
+  color-scheme: dark;
+  --page-bg: #07111f;
+  --surface: #0e1c2b;
+  --surface-raised: #122538;
+  --surface-border: #b7d5e51d;
+  --text-primary: #edf4f8;
+  --text-muted: #a4b4c3;
+  --accent: #62dce1;
+  --accent-warm: #edbd75;
+  --content-width: 1280px;
+}
+
+html {
+  scroll-padding-top: 98px;
+  scrollbar-color: #36576b var(--page-bg);
+}
+body {
+  min-width: 320px;
+  color: var(--text-primary);
+  background:
+    radial-gradient(ellipse at 50% -20%, #153b4a66, transparent 48%),
+    radial-gradient(ellipse at 100% 52%, #15283b55, transparent 35%),
+    var(--page-bg);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+::selection { color: #06131e; background: #71e4e6; }
+:focus-visible {
+  outline: 3px solid #78e6e9;
+  outline-offset: 4px;
+}
+.skip-link {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 100;
+  transform: translateY(-150%);
+  padding: 11px 16px;
+  border-radius: 8px;
+  color: #06131e;
+  background: #71e4e6;
+  font-weight: 800;
+}
+.skip-link:focus { transform: translateY(0); }
+.reading-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 40;
+  height: 3px;
+  background: transparent;
+}
+.reading-progress span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #51d6dd, #e8ba72, #b69af7);
+  box-shadow: 0 0 14px #51d6dd80;
+}
+.topbar {
+  height: 76px;
+  padding-inline: max(5.5%, calc((100% - var(--content-width)) / 2));
+  background: #07111fe8;
+  border-bottom-color: #ffffff17;
+  box-shadow: 0 12px 32px #00000012;
+}
+.brand { flex-shrink: 0; letter-spacing: 1.7px; }
+.brand-mark { box-shadow: inset 0 0 16px #4cd9df10, 0 0 20px #4cd9df12; }
+.nav { align-items: center; gap: clamp(14px, 2.2vw, 30px); }
+.nav a {
+  position: relative;
+  padding: 10px 0;
+  color: #b1bfcc;
+  font-size: 11px;
+  transition: color .2s ease;
+}
+.nav a::after {
+  position: absolute;
+  right: 0;
+  bottom: 3px;
+  left: 0;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: left;
+  border-radius: 2px;
+  background: var(--accent);
+  content: "";
+  transition: transform .2s ease;
+}
+.nav a:hover, .nav a.is-active { color: #f3fbfc; }
+.nav a:hover::after, .nav a.is-active::after { transform: scaleX(1); }
+.outline-btn, .primary-btn {
+  min-height: 44px;
+  border-radius: 8px;
+  font-size: 11px;
+  transition: background .2s ease, border-color .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+.outline-btn { border-color: #60778966; }
+.outline-btn:hover {
+  border-color: var(--accent);
+  background: #183143;
+  color: #fff;
+}
+.primary-btn {
+  box-shadow: 0 8px 26px #53d4d829;
+  font-weight: 800;
+}
+.primary-btn:hover {
+  transform: translateY(-2px);
+  background: #72e3e5;
+  box-shadow: 0 12px 32px #53d4d84a;
+}
+.nav-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+  border: 1px solid #60778966;
+  border-radius: 8px;
+  background: #102031;
+  cursor: pointer;
+}
+.nav-toggle span {
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: #e6f0f5;
+  transition: transform .2s ease, opacity .2s ease;
+}
+.nav-toggle[aria-expanded="true"] span:first-child { transform: translateY(7px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] span:last-child { transform: translateY(-7px) rotate(-45deg); }
+.hero {
+  min-height: min(820px, calc(100svh - 76px));
+  padding: clamp(80px, 10vh, 118px) max(8%, calc((100% - var(--content-width)) / 2)) 76px;
+  background: linear-gradient(115deg, #07111f52, transparent 75%);
+}
+.hero-grid {
+  opacity: .7;
+  background-size: 64px 64px;
+  mask-image: linear-gradient(90deg, #000, transparent 96%);
+}
+.hero-content { max-width: 650px; }
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 9px 13px;
+  border: 1px solid #58d9de29;
+  border-radius: 999px;
+  background: #12304085;
+  font-size: 9px;
+  letter-spacing: 1.6px;
+}
+.eyebrow i { flex: 0 0 6px; }
+.hero-brand-logo { width: clamp(180px, 17vw, 230px); }
+.hero h1 {
+  margin: 14px 0 20px;
+  font-size: clamp(42px, 4.5vw, 62px);
+  line-height: 1.04;
+  letter-spacing: -2.8px;
+}
+.hero-copy { max-width: 500px; color: #b6c4cf; font-size: 15px; }
+.hero-actions { flex-wrap: wrap; gap: 16px 22px; margin-top: 30px; }
+.hero-note { color: #91a5b5; }
+.hero-visual.team-visual {
+  right: max(5.5%, calc((100% - var(--content-width)) / 2));
+  width: min(43%, 560px);
+}
+.team-cards { gap: clamp(8px, 1vw, 14px); }
+.team-card {
+  border-color: #d3e6ee30;
+  border-radius: 14px;
+  box-shadow: 0 24px 60px #00000042;
+}
+.team-card img { filter: saturate(.92); transition: transform .55s ease, filter .3s ease; }
+.team-card:hover img { transform: scale(1.045); filter: saturate(1.05); }
+.team-card figcaption { padding: 48px 12px 14px; }
+.team-card figcaption strong { font-size: clamp(10px, 1.1vw, 14px); }
+.hero-bottom { color: #8498a9; }
+.section-wrap {
+  width: min(100%, var(--content-width));
+  padding: clamp(76px, 9vw, 116px) clamp(22px, 5.5%, 72px);
+}
+.overview, .method-section, .simulation-section { border-top-color: #c1d9e318; }
+.overview { background: linear-gradient(180deg, #0d1a291c, transparent 55%); }
+.section-kicker, .method-label, .step { letter-spacing: 1.8px; }
+.section-heading { margin: 18px 0 38px; gap: 42px; }
+.section-heading h2, .closing h2 {
+  font-size: clamp(38px, 5vw, 62px);
+  letter-spacing: -2.7px;
+}
+.section-heading p, .method-lead { color: var(--text-muted); }
+.method-cards { gap: 16px; }
+.method-card {
+  min-height: 275px;
+  padding: 25px;
+  border-color: var(--surface-border);
+  border-radius: 16px;
+  background: linear-gradient(145deg, #13283a, #0c1928 78%);
+  box-shadow: 0 12px 32px #00000016;
+}
+.method-card:hover {
+  transform: translateY(-6px);
+  border-color: #54d6dc8a;
+  box-shadow: 0 24px 48px #00000032, 0 0 32px #54d6dc0b;
+}
+.method-card h3 { font-size: 19px; }
+.method-card p { color: #a7b7c5; font-size: 12px; line-height: 1.75; }
+.method-card>span { bottom: 22px; }
+.method-section {
+  padding: 54px 0 68px;
+  background-image: radial-gradient(ellipse at 82% 0%, #1641574d, transparent 44%);
+}
+.method-section.alt {
+  background-image: radial-gradient(ellipse at 82% 0%, #61472326, transparent 45%);
+}
+.method-title-row { margin: 24px 0 34px; }
+.method-title-row h2 { font-size: clamp(40px, 5vw, 64px); letter-spacing: -2.6px; }
+.intro-panel {
+  padding: clamp(24px, 3.2vw, 38px);
+  border-radius: 14px;
+  box-shadow: 0 16px 42px #00000018;
+}
+.intro-panel p { color: #b8c5cf; font-size: 13px; }
+.concept-chips span {
+  border-radius: 999px;
+  font-size: 9px;
+}
+.data-grid { gap: 16px; }
+.data-panel {
+  padding: clamp(18px, 2vw, 25px);
+  border-color: var(--surface-border);
+  border-radius: 14px;
+  background: linear-gradient(150deg, #102133, #0b1826 80%);
+  box-shadow: 0 12px 32px #00000018;
+}
+.data-panel.wide { margin-top: 2px; }
+.panel-head h3 { font-size: 18px; }
+.panel-desc { color: #a7b7c5; font-size: 12px; }
+.file-type { border-radius: 6px; }
+.file-tabs { overflow-x: auto; }
+.tab {
+  min-height: 42px;
+  padding: 10px 13px;
+  border-radius: 7px 7px 0 0;
+}
+.tab.active { color: #79e1e4; background: #13293a; }
+.code-view {
+  max-width: 100%;
+  border: 1px solid #bfd7e117;
+  border-radius: 0 0 10px 10px;
+}
+.metric {
+  min-width: 0;
+  border: 1px solid #bdd6e21c;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #12263a, #0d1b2b);
+}
+.metric small { line-height: 1.6; }
+.result-note { border-radius: 10px; }
+.chart-panel {
+  overflow: hidden;
+  border: 1px solid #bdd6e21f;
+  border-radius: 14px;
+  background: #0b1927;
+}
+.chart-head { padding: 18px 20px 0; }
+.table-wrap {
+  max-width: 100%;
+  border: 1px solid #bdd6e21c;
+  border-radius: 12px;
+}
+table { min-width: 680px; }
+th { position: sticky; top: 0; z-index: 1; }
+details {
+  margin-top: 16px;
+  border: 1px solid #bdd6e21c;
+  border-radius: 10px;
+  background: #0d1b29;
+}
+details summary { padding: 13px 16px; color: #d8e6ed; cursor: pointer; }
+details[open] summary { border-bottom: 1px solid #bdd6e21c; }
+details .code-view { margin: 0; border: 0; }
+.simulation-section {
+  padding: 32px 0 48px;
+  background: radial-gradient(ellipse at 50% 12%, #14364a7a, #0b1724 65%);
+}
+.game-shell {
+  border-color: #b7d5e52b;
+  border-radius: 18px;
+  box-shadow: 0 28px 80px #0000004a;
+}
+.game-topbar { padding: 25px clamp(18px, 3vw, 32px); }
+.game-mode { min-height: 54px; }
+.game-mode:focus-visible, .tab:focus-visible { outline-offset: -3px; }
+.game-controls { background: linear-gradient(145deg, #102033, #0b1724); }
+.game-info { background: #0c1927; }
+.game-play, .game-reset { min-height: 46px; border-radius: 8px; }
+.game-slider input { min-height: 26px; }
+.closing {
+  position: relative;
+  isolation: isolate;
+}
+.closing::before {
+  position: absolute;
+  z-index: -1;
+  inset: 10% 5%;
+  border: 1px solid #59d9dc18;
+  border-radius: 24px;
+  background: radial-gradient(ellipse at 0% 50%, #14394b40, transparent 60%);
+  content: "";
+}
+.closing-grid { gap: 48px; }
+.closing-grid p { color: #aebdca; }
+.text-link { text-underline-offset: 5px; }
+footer {
+  gap: 16px;
+  padding-top: 24px;
+  border-top-color: #c1d9e322;
+  color: #9aabba;
+}
+.nav-toggle { flex-shrink: 0; }
+
+@media(max-width:850px) {
+  .topbar { gap: 14px; padding-inline: 5%; }
+  .nav { gap: 13px; }
+  .nav a { font-size: 10px; }
+  .hero { padding-inline: 6%; }
+  .hero-visual.team-visual { right: 5%; width: 43%; }
+  .hero h1 { font-size: clamp(38px, 5vw, 48px); }
+}
+@media(max-width:700px) {
+  html { scroll-padding-top: 80px; }
+  .topbar { height: 68px; }
+  .nav-toggle { display: flex; margin-left: auto; }
+  .topbar > .outline-btn { min-height: 42px; padding: 9px 11px; }
+  .nav {
+    position: absolute;
+    top: calc(100% + 1px);
+    right: 14px;
+    left: 14px;
+    display: none;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px;
+    border: 1px solid #bed8e32c;
+    border-radius: 13px;
+    background: #0b1827f7;
+    box-shadow: 0 22px 50px #00000065;
+    backdrop-filter: blur(20px);
+  }
+  .nav.is-open { display: flex; }
+  .nav a {
+    min-height: 46px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+  }
+  .nav a::after { display: none; }
+  .nav a:hover, .nav a.is-active { background: #173144; }
+  .hero {
+    min-height: 0;
+    padding: 76px 7% 56px;
+  }
+  .hero-visual.team-visual {
+    right: auto;
+    width: 100%;
+  }
+  .hero-bottom { bottom: 18px; }
+  .section-wrap { padding: 78px 6%; }
+  .section-heading { margin-bottom: 30px; }
+  .method-cards { gap: 12px; }
+  .method-card { min-height: 245px; }
+  .method-section { padding: 34px 0 42px; }
+  .data-grid { grid-template-columns: 1fr; }
+  .data-panel.wide { grid-column: auto; }
+  .table-wrap { overscroll-behavior-x: contain; }
+  .game-topbar { align-items: flex-start; gap: 12px; }
+  .game-live { text-align: right; }
+  .closing-grid { gap: 25px; }
+  footer { align-items: flex-start; }
+}
+@media(max-width:420px) {
+  .topbar { gap: 8px; }
+  .brand { gap: 8px; font-size: 9px; letter-spacing: 1.2px; }
+  .brand-mark { width: 31px; height: 31px; }
+  .topbar > .outline-btn { padding: 8px; font-size: 9px; }
+  .outline-btn span { margin-left: 3px; }
+  .hero-actions { align-items: flex-start; flex-direction: column; }
+  .team-card figcaption { padding-right: 6px; padding-left: 6px; }
+  .team-card figcaption strong { font-size: 9px; }
+  .game-topbar h3 { font-size: 18px; }
+}
+@media(prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+</style>
 </head>
 
 <body>
+  <a class="skip-link" href="#overview">Lewati ke konten utama</a>
+  <div class="reading-progress" role="progressbar" aria-label="Kemajuan membaca" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
   <div class="noise"></div>
   <header class="topbar">
     <a class="brand" href="#home"><span class="brand-mark">G<span>•</span></span><span>FIELD NOTES<small>GEOPHYSICAL DATA LAB</small></span></a>
-    <nav class="nav">
+    <button class="nav-toggle" type="button" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="primary-nav">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav" id="primary-nav" aria-label="Navigasi utama">
       <a href="#overview">Overview</a><a href="#seismic">Seismik</a><a href="#resistivity">Resistivitas</a><a href="#magnetic">Magnetik</a><a href="#simulation">Simulation Lab</a>
     </nav>
     <button class="outline-btn" onclick="window.print()">Cetak / PDF <span>↗</span></button>
@@ -466,18 +879,18 @@
       </div>
       <div class="hero-visual team-visual" aria-label="Profil tim presentasi geofisika">
         <div class="team-cards">
-            <figure class="team-card">
-              <img src="assets/profiles/agiel-syambahri.jpeg" alt="Agiel Syambahri" fetchpriority="high">
-              <figcaption><span>01 / TEAM</span><strong>Agiel Syambahri</strong></figcaption>
-            </figure>
-            <figure class="team-card">
-              <img src="assets/profiles/ammara-qisty.jpeg" alt="Ammara Qisty" fetchpriority="high">
-              <figcaption><span>02 / TEAM</span><strong>Ammara Qisty</strong></figcaption>
-            </figure>
-            <figure class="team-card">
-              <img src="assets/profiles/mita-anggraini.jpeg" alt="Mita Anggraini" fetchpriority="high">
-              <figcaption><span>03 / TEAM</span><strong>Mita Anggraini</strong></figcaption>
-            </figure>
+          <figure class="team-card">
+            <img src="assets/profiles/agiel-syambahri.jpeg" alt="Agiel Syambahri" fetchpriority="high">
+            <figcaption><span>01 / TEAM</span><strong>Agiel Syambahri</strong></figcaption>
+          </figure>
+          <figure class="team-card">
+            <img src="assets/profiles/ammara-qisty.jpeg" alt="Ammara Qisty" fetchpriority="high">
+            <figcaption><span>02 / TEAM</span><strong>Ammara Qisty</strong></figcaption>
+          </figure>
+          <figure class="team-card">
+            <img src="assets/profiles/mita-anggraini.jpeg" alt="Mita Anggraini" fetchpriority="high">
+            <figcaption><span>03 / TEAM</span><strong>Mita Anggraini</strong></figcaption>
+          </figure>
         </div>
       </div>
       <div class="hero-bottom"><span>GEOPHYSICS / DIGITAL PRESENTATION</span><span>01 — 03</span></div>
@@ -1546,6 +1959,98 @@ function initializeGeo3D() {
 
 
 
+</script>
+
+<script>
+(() => {
+  const menuButton = document.querySelector(".nav-toggle");
+  const navigation = document.getElementById("primary-nav");
+  const progress = document.querySelector(".reading-progress");
+
+  if (menuButton && navigation) {
+    const closeMenu = () => {
+      menuButton.setAttribute("aria-expanded", "false");
+      menuButton.setAttribute("aria-label", "Buka menu navigasi");
+      navigation.classList.remove("is-open");
+    };
+
+    menuButton.addEventListener("click", () => {
+      const isOpen = menuButton.getAttribute("aria-expanded") !== "true";
+      menuButton.setAttribute("aria-expanded", String(isOpen));
+      menuButton.setAttribute(
+        "aria-label",
+        isOpen ? "Tutup menu navigasi" : "Buka menu navigasi"
+      );
+      navigation.classList.toggle("is-open", isOpen);
+    });
+
+    navigation.addEventListener("click", event => {
+      if (event.target.closest("a")) closeMenu();
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && menuButton.getAttribute("aria-expanded") === "true") {
+        closeMenu();
+        menuButton.focus();
+      }
+    });
+
+    document.addEventListener("click", event => {
+      if (
+        menuButton.getAttribute("aria-expanded") === "true" &&
+        !navigation.contains(event.target) &&
+        !menuButton.contains(event.target)
+      ) {
+        closeMenu();
+      }
+    });
+  }
+
+  if (progress) {
+    let updateScheduled = false;
+    const updateProgress = () => {
+      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const percentage = scrollableHeight > 0
+        ? Math.round((window.scrollY / scrollableHeight) * 100)
+        : 0;
+      progress.setAttribute("aria-valuenow", String(percentage));
+      progress.firstElementChild.style.width = percentage + "%";
+      updateScheduled = false;
+    };
+
+    window.addEventListener("scroll", () => {
+      if (updateScheduled) return;
+      updateScheduled = true;
+      window.requestAnimationFrame(updateProgress);
+    }, { passive: true });
+
+    updateProgress();
+  }
+
+  const navLinks = [...document.querySelectorAll("#primary-nav a[href^='#']")];
+  if ("IntersectionObserver" in window && navLinks.length) {
+    const sections = navLinks
+      .map(link => document.querySelector(link.getAttribute("href")))
+      .filter(Boolean);
+
+    const sectionObserver = new IntersectionObserver(entries => {
+      const visibleSection = entries
+        .filter(entry => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+      if (!visibleSection) return;
+
+      navLinks.forEach(link => {
+        const isCurrent = link.hash === "#" + visibleSection.target.id;
+        link.classList.toggle("is-active", isCurrent);
+        if (isCurrent) link.setAttribute("aria-current", "location");
+        else link.removeAttribute("aria-current");
+      });
+    }, { rootMargin: "-30% 0px -60% 0px", threshold: [0, 0.1, 0.25, 0.5] });
+
+    sections.forEach(section => sectionObserver.observe(section));
+  }
+})();
 </script>
 
 </body>
